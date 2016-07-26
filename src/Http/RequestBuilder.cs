@@ -42,7 +42,7 @@ namespace Dotissi.AzureTable.LiteClient.Http
             {
                 if (propTypes[key] == typeof(Int64))
                 {
-                    jobj[key+ "@odata.type"]= "Edm.Int64";
+                    jobj[key + "@odata.type"] = "Edm.Int64";
                     jobj[key] = jobj[key].ToString();
                 }
                 else if (propTypes[key] == typeof(DateTime) || propTypes[key] == typeof(DateTimeOffset))
@@ -52,6 +52,10 @@ namespace Dotissi.AzureTable.LiteClient.Http
                 else if (propTypes[key] == typeof(Guid))
                 {
                     jobj[key + "@odata.type"] = "Edm.Guid";
+                }
+                else if (propTypes[key] == typeof(byte[]))
+                {
+                    jobj[key + "@odata.type"] = "Edm.Binary";
                 }
             }
             string json = Newtonsoft.Json.JsonConvert.SerializeObject(jobj);

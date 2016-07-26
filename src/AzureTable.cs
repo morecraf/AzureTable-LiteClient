@@ -27,7 +27,6 @@ namespace Dotissi.AzureTable.LiteClient
             this.uri = uri.TrimEnd('/').TrimEnd('\\');
             httpClient = new HttpClient();
             httpClient.BaseAddress = new Uri(this.uri);
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             this.requestBuilder = new RequestBuilder(this.uri);
             this.signature = new Signature(account, key);
             this.table = table;
@@ -107,12 +106,49 @@ namespace Dotissi.AzureTable.LiteClient
 
             foreach (var item in array)
             {
-                all.Add(item.ToObject<T>());
+                JObject jobj=item as JObject;
+                if (jobj != null)
+                {
+                    this.PrepareJObjectResponse(jobj);
+                    all.Add(jobj.ToObject<T>());
+                }
             }
             return httpResponseMessage;
         }
+        private void PrepareJObjectResponse(JObject jobj)
+        {
+            var ODataTypes = jobj.Properties().Where(a => a.Name.EndsWith("@odata.type")).ToList();
+            foreach (var odataType in ODataTypes)
+            {
+                if (odataType.ToObject<string>() == "Edm.Int64")
+                {
+                    string key = odataType.Name.Replace("@odata.type", "");
+                    jobj[key] = Convert.ToInt64(jobj[key].ToObject<string>());
+                }
+                else if (odataType.ToObject<string>() == "Edm.Guid")
+                {
+                    string key = odataType.Name.Replace("@odata.type", "");
+                    jobj[key] = new Guid(jobj[key].ToObject<string>());
 
-        public async Task<T> FindOneAsync<T>(string partitionKey,string rowKey)
+                }
+                else if (odataType.ToObject<string>() == "Edm.DateTime")
+                {
+                    string key = odataType.Name.Replace("@odata.type", "");
+                    jobj[key] = jobj[key].ToObject<DateTime>();
+
+                }
+                else if (odataType.ToObject<string>() == "Edm.Binary")
+                {
+                    string key = odataType.Name.Replace("@odata.type", "");
+                    jobj[key] = Convert.FromBase64String(jobj[key].ToObject<string>());
+
+                }
+                jobj.Remove(odataType.Name);
+            }
+
+        }
+
+        public async Task<T> FindOneAsync<T>(string partitionKey, string rowKey)
         {
             string uriFragment = string.Format("{0}(PartitionKey='{1}', RowKey='{2}')", table, partitionKey, rowKey); ;
             HttpRequestMessage request = requestBuilder.BuildGetRequest(uriFragment, null);
@@ -121,13 +157,14 @@ namespace Dotissi.AzureTable.LiteClient
                 return default(T);
 
             var obj = await httpResponseMessage.Content.ReadAsStringAsync();
-
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(obj);
+            JObject jobj = Newtonsoft.Json.JsonConvert.DeserializeObject<JObject>(obj);
+            PrepareJObjectResponse(jobj);
             
-         
+            return jobj.ToObject<T>();
+
         }
 
-        public async Task<TableResult> InsertAsync(string table, object entity)
+        public async Task<TableResult> InsertAsync(object entity)
         {
             string uriFragment = table;
             HttpRequestMessage request = requestBuilder.BuildSubmitRequest(uriFragment, entity,HTTPSubmitType.POST);
@@ -136,45 +173,45 @@ namespace Dotissi.AzureTable.LiteClient
             return PrepareSubmitResult(httpResponseMessage);
         }
        
-        public Task<TableResult> InsertOrMergeAsync(string table, object entity)
+        public Task<TableResult> InsertOrMergeAsync( object entity)
         {
-            return this.InsertOrUpdateAsync(table, entity, HTTPSubmitType.MERGE);
+            return this.InsertOrUpdateAsync( entity, HTTPSubmitType.MERGE);
         }
-        public Task<TableResult> InsertOrReplaceAsync(string table, object entity)
+        public Task<TableResult> InsertOrReplaceAsync( object entity)
         {
-            return this.InsertOrUpdateAsync(table, entity, HTTPSubmitType.PUT);
+            return this.InsertOrUpdateAsync( entity, HTTPSubmitType.PUT);
         }
-        private async Task<TableResult> InsertOrUpdateAsync(string table, object entity, HTTPSubmitType submitType)
+        private async Task<TableResult> InsertOrUpdateAsync( object entity, HTTPSubmitType submitType)
         {
-            var uriFragment = PrepareUriFragment(table, entity);
+            var uriFragment = PrepareUriFragment( entity);
             HttpRequestMessage request = requestBuilder.BuildSubmitRequest(uriFragment, entity, submitType);
             HttpResponseMessage httpResponseMessage = await this.SendAsync(request);
             return PrepareSubmitResult(httpResponseMessage);
         }
-        public Task<TableResult> ReplaceAsync(string table, string Etag, object entity)
+        public Task<TableResult> ReplaceAsync(  object entity, string etag="*")
         {
-            return this.UpdateAsync(table, Etag, entity, HTTPSubmitType.PUT);
+            return this.UpdateAsync( etag, entity, HTTPSubmitType.PUT);
         }
-        public Task<TableResult> MergeAsync(string table, string Etag, object entity)
+        public Task<TableResult> MergeAsync(  object entity, string etag="*")
         {
-            return this.UpdateAsync(table, Etag, entity, HTTPSubmitType.MERGE);
+            return this.UpdateAsync( etag, entity, HTTPSubmitType.MERGE);
         }
 
-        private async Task<TableResult> UpdateAsync(string table,string Etag, object entity, HTTPSubmitType submitType)
+        private async Task<TableResult> UpdateAsync(string etag, object entity, HTTPSubmitType submitType)
         {
            
-            var uriFragment = PrepareUriFragment(table, entity);
+            var uriFragment = PrepareUriFragment(entity);
             HttpRequestMessage request = requestBuilder.BuildSubmitRequest(uriFragment, entity, submitType);
-            request.Headers.Add("If-Match", Etag);
+            request.Headers.Add("If-Match", etag);
             HttpResponseMessage httpResponseMessage = await this.SendAsync(request);
             return PrepareSubmitResult(httpResponseMessage);
         }
 
-        public async Task<TableResult> DeleteAsync(string table, string Etag, object entity)
+        public async Task<TableResult> DeleteAsync( object entity, string etag="*")
         {
-            var uriFragment = PrepareUriFragment(table, entity);
+            var uriFragment = PrepareUriFragment( entity);
             HttpRequestMessage request = requestBuilder.BuildDeleteRequest(uriFragment);
-            request.Headers.Add("If-Match", Etag);
+            request.Headers.Add("If-Match", etag);
             HttpResponseMessage httpResponseMessage = await this.SendAsync(request);
             TableResult tr = new TableResult();
             tr.HttpStatusCode = (int)httpResponseMessage.StatusCode;
@@ -201,7 +238,7 @@ namespace Dotissi.AzureTable.LiteClient
             HttpResponseMessage httpResponseMessage = await this.SendAsync(request);
             return httpResponseMessage != null;
         }
-        private string PrepareUriFragment(string table, object entity)
+        private string PrepareUriFragment( object entity)
         {
             var pk = ReflectionHelper.GetPropertyStringValue(entity, "PartitionKey");
             var rk = ReflectionHelper.GetPropertyStringValue(entity, "RowKey");
@@ -212,25 +249,11 @@ namespace Dotissi.AzureTable.LiteClient
             TableResult tr = new TableResult();
             tr.ETag = httpResponseMessage.Headers.ETag.ToString();
             tr.HttpStatusCode = (int)httpResponseMessage.StatusCode;
-            tr.Timestamp = ParseETagForTimestamp(tr.ETag);
+            tr.Timestamp = ETagHelper.ParseETagForTimestamp(tr.ETag);
             return tr;
         }
 
-        private static DateTimeOffset ParseETagForTimestamp(string etag)
-        {
-            if (etag.StartsWith("W/", StringComparison.Ordinal))
-            {
-                etag = etag.Substring(2);
-            }
-            string prefix = "\"datetime'";
-            etag = etag.Substring(prefix.Length, etag.Length - 2 - prefix.Length);
-            return DateTimeOffset.Parse(Uri.UnescapeDataString(etag), CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
-        }
-        private static string GetETagFromTimestamp(string timeStampString)
-        {
-            timeStampString = Uri.EscapeDataString(timeStampString);
-            return "W/\"datetime'" + timeStampString + "'\"";
-        }
+       
 
         private async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
         {

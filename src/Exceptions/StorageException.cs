@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Dotissi.AzureTable.LiteClient.Exceptions
 {
-    class StorageException:Exception
+    public class StorageException:Exception
     {
         public StorageException(string message):base(message)
         {

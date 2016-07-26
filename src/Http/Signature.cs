@@ -27,7 +27,7 @@ namespace Dotissi.AzureTable.LiteClient.Http
         {
             string date = DateTime.UtcNow.ToString("R", CultureInfo.InvariantCulture);
             message.Headers.Add(TimestampHeaderName, date);
-            message.Headers.Add("Accept", "application/json;odata=nometadata");
+            message.Headers.Add("Accept", "application/json;odata=minimalmetadata");
             message.Headers.Add("x-ms-version", "2015-04-05");
             string signature = MakeSignature(message,date);
             string authorizationString = string.Format("{0} {1}:{2}", AuthenticationType, account, signature);
