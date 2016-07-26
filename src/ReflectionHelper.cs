@@ -18,7 +18,7 @@ namespace Dotissi.AzureTable.LiteClient
                 var dict = (IDictionary<String, Object>)entity;
                 if (!dict.ContainsKey(propName))
                 {
-                    throw new Exception(string.Format("Entity does not have '{0}' property defined", propName));
+                    throw new Exceptions.StorageException(string.Format("Entity does not have '{0}' property defined", propName));
                 }
                 return dict[propName] as string;
             }
@@ -26,9 +26,9 @@ namespace Dotissi.AzureTable.LiteClient
             {
                 TypeInfo typeInfo = t.GetTypeInfo();
                 var pinfo = typeInfo.GetDeclaredProperty(propName);
-                //TODO better exceptio
+               
                 if (pinfo == null)
-                    throw new Exception(string.Format("Entity does not have '{0}' property defined", propName));
+                    throw new Exceptions.StorageException(string.Format("Entity does not have '{0}' property defined", propName));
                 return pinfo.GetValue(entity).ToString();
             }
 

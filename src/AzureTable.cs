@@ -31,8 +31,12 @@ namespace Dotissi.AzureTable.LiteClient
             this.signature = new Signature(account, key);
             this.table = table;
         }
-        
-        public async Task<List<T>> FindAllAsync<T>( string filter=null, string select=null)
+        public  async Task<IEnumerable<dynamic>> FindAllAsync(string filter = null, string select = null)
+        {
+            return await this.FindAllAsync<ExpandoObject>(filter, select);
+
+        }
+        public async Task<IEnumerable<T>> FindAllAsync<T>( string filter=null, string select=null)
         {
             var paramss = this.BuildReadParams(filter, select);
             List<T> all = new List<T>();
@@ -67,7 +71,11 @@ namespace Dotissi.AzureTable.LiteClient
             return all;
            
         }
-        public async Task<List<T>> FindAsync<T>(string filter = null, string select = null, string top = null)
+        public async Task<IEnumerable<dynamic>> FindAsync(string filter = null, string select = null, string top = null)
+        {
+            return await this.FindAsync<ExpandoObject>(filter, select, top);
+        }
+        public async Task<IEnumerable<T>> FindAsync<T>(string filter = null, string select = null, string top = null)
         {
             var paramss = this.BuildReadParams(filter,select,top);
             List<T> all = new List<T>();
@@ -147,7 +155,10 @@ namespace Dotissi.AzureTable.LiteClient
             }
 
         }
-
+        public async Task<dynamic> FindOneAsync(string partitionKey, string rowKey)
+        {
+            return await FindOneAsync<ExpandoObject>(partitionKey, rowKey);
+        }
         public async Task<T> FindOneAsync<T>(string partitionKey, string rowKey)
         {
             string uriFragment = string.Format("{0}(PartitionKey='{1}', RowKey='{2}')", table, partitionKey, rowKey); ;
