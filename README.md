@@ -94,7 +94,7 @@ The query syntax is based on the REST API, more info about the syntax can be fou
 ## FAQ
 
 Q: Who is using it?
-A: [Siaqodb](http://siaqodb) will use it very soon, stay tuned!
+A: [Siaqodb](http://siaqodb.com) will use it very soon, stay tuned!
 
 
 
