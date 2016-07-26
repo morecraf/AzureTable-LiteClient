@@ -81,12 +81,14 @@ string myFilter="PartitionKey eq 'Harp'" and Age gt 30"
 var items = await table.FindAsync<Person>(filter:myFilter);
 
 //get by timestamp (WHERE Timestamp < now)
+
 string myFilter = string.Format("Timestamp lt datetime'{0}'", DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
+
 var items = await table.FindAsync<Person>(filter:myFilter);
 
 ```
 
-The query syntax is based on the REST API, more info about the syntax can be found [here](https://msdn.microsoft.com/en-us/library/azure/dd894031.aspx).
+The query syntax is based on the REST API, more info about the syntax can be found [here](https://msdn.microsoft.com/en-us/library/azure/dd894031.aspx). The filter string should NOT be URL encoded, the library encodes it for you.
 
 
 
