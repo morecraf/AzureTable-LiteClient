@@ -91,5 +91,11 @@ var items = await table.FindAsync<Person>(filter:myFilter);
 The query syntax is based on the REST API, more info about the syntax can be found [here](https://msdn.microsoft.com/en-us/library/azure/dd894031.aspx). The filter string should NOT be URL encoded, the library encodes it for you.
 
 
+## FAQ
+
+Q: Who is using it?
+A: [Siaqodb](http://siaqodb) will use it very soon, stay tuned!
+
+
 
 
