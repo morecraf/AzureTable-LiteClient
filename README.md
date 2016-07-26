@@ -1,4 +1,5 @@
-## AzureTable.LiteClient - simple, complete and super fast Azure Table Storage client for .NET.
+# AzureTable.LiteClient 
+## simple, complete and super fast Azure Table Storage client for .NET.
 
 Unlike the official [Azure Storage SDK for .NET](https://github.com/Azure/azure-storage-net), AzureTable.LiteClient has the following features:
 * fully support for POCO
