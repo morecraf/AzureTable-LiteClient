@@ -38,7 +38,7 @@ Person p = new Person {PartitionKey="Harp",RowKey="jd_01",FirstName="John", Last
 TableResult result = await table.InsertAsync(p);
 
 ```
-
+Note: every entity should have the PartitionKey and the RowKey properties, this is the only mandatory requirement.
 
 
 ## Get the entity by PK and RK:
