@@ -6,6 +6,7 @@ Unlike the official [Azure Storage SDK for .NET](https://github.com/Azure/azure-
 * PCL only (small footprint - optimal to be used with Xamarin)
 * minimal dependencies (only Newtosoft.Json), no OData dependencies
 
+You can get the binaries from [Nuget](https://www.nuget.org/packages/AzureTable.LiteClient/).
 
 ## Get table reference
 
