@@ -6,12 +6,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ClassLibrary1")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Dotissi.AzureTable.LiteClient")]
+[assembly: AssemblyDescription("simple, complete and super fast Azure Table Storage client for .NET")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ClassLibrary1")]
-[assembly: AssemblyCopyright("Copyright ©  2016")]
+[assembly: AssemblyCompany("Dotisso")]
+[assembly: AssemblyProduct("Dotissi.AzureTable.LiteClient")]
+[assembly: AssemblyCopyright("Copyright © Dotissi  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en")]
