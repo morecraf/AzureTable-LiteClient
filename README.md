@@ -1,9 +1,9 @@
 ## AzureTable.LiteClient - simple, complete and super fast Azure Table Storage client for .NET.
 
 Unlike the official [Azure Storage SDK for .NET](https://github.com/Azure/azure-storage-net), AzureTable.LiteClient has the following features:
-* fully support for POCO
-* fully support for dynamic and anonymous objects
-* PCL only (small footprint - optimal to be used with Xamarin)
+* full support for POCO
+* full support for dynamic and anonymous objects
+* PCL only (small footprint - ideal to be used with Xamarin)
 * minimal dependencies (only Newtosoft.Json), no OData dependencies
 
 You can get the binaries from [Nuget](https://www.nuget.org/packages/AzureTable.LiteClient/).
@@ -78,7 +78,7 @@ examples of other types or more complex queries:
 ```csharp
 
 //get all entities for WHERE PartitionKey="Harp" AND Age>30
-string myFilter="PartitionKey eq 'Harp'" and Age gt 30"
+string myFilter="PartitionKey eq 'Harp' and Age gt 30"
 var items = await table.FindAsync<Person>(filter:myFilter);
 
 //get by timestamp (WHERE Timestamp < now)
@@ -95,6 +95,7 @@ The query syntax is based on the REST API, more info about the syntax can be fou
 ## FAQ
 
 Q: Who is using it?
+
 A: [Siaqodb](http://siaqodb.com) will use it very soon, stay tuned!
 
 
