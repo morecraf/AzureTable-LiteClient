@@ -96,7 +96,7 @@ The query syntax is based on the REST API, more info about the syntax can be fou
 
 Q: How can I use this with Siaqodb?
 
-A: [Siaqodb](http://siaqodb.com) has a module called SiaqodbCloud.  As of version 5.5.0.11, the service has a new SiaqodbSync method tgat takes an AzureTableClient object to syncronize all objects to your database automatically.
+A: [Siaqodb](http://siaqodb.com) has a module called SiaqodbCloud.  As of version 5.5.0.10, the service has a new SiaqodbSync method tgat takes an AzureTableClient object to syncronize all objects to your database automatically.
 
 
 
